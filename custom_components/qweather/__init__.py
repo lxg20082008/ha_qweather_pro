@@ -30,7 +30,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> 
     
     # 1. 动态获取 manifest.json 信息 (包括版本号)
     integration = await async_get_integration(hass, DOMAIN)
-    version = integration.version
+    raw_version = integration.version
+    version = str(raw_version) if raw_version else "1.0.0"
     
     # 2. 动态获取物理路径并注册静态资源
     base_path = os.path.dirname(__file__)

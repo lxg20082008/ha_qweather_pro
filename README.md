@@ -1,7 +1,7 @@
-# 和风天气Pro (QWeather Pro)
+# <img src="custom_components/qweather_pro/brand/icon.png" width="64"> 和风天气Pro (QWeather Pro)
 
-[![Release](https://img.shields.io/github/v/release/hzonz/qweather_pro)](https://github.com/hzonz/qweather_pro/releases)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/hzonz/qweather_pro/blob/main/LICENSE)
+[![Release](https://img.shields.io/github/v/release/hzonz/ha_qweather_pro)](https://github.com/hzonz/ha_qweather_pro/releases)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/hzonz/ha_qweather_pro/blob/main/LICENSE)
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
 ## 一款为 Home Assistant 深度定制的 和风天气 (QWeather) 高级集成。采用 2026 年最新开发标准重构，不仅提供精准的气象数据，还包含极速渲染的 原生 SVG 天气卡片 与 专业级详情弹窗。
@@ -27,7 +27,7 @@
 
 1. 在HACS的"集成"部分，点击右上角的三点菜单
 2. 选择"自定义存储库"
-3. 在存储库字段输入：`https://github.com/hzonz/qweather_pro`
+3. 在存储库字段输入：`https://github.com/hzonz/ha_qweather_pro`
 4. 类别选择"集成"
 5. 点击"添加"保存
 6. 在HACS中找到"和风天气Pro"集成并点击安装
@@ -35,8 +35,8 @@
 
 ### 手动安装
 
-1. 下载最新的: `https://github.com/hzonz/qweather_pro`
-2. 解压并将`custom_components/qweather`文件夹放入Home Assistant的`custom_components`目录
+1. 下载最新的: `https://github.com/hzonz/ha_qweather_pro`
+2. 解压并将`custom_components/qweather_pro`文件夹放入Home Assistant的`custom_components`目录
 3. 重启Home Assistant
 
 ## 📖 文档导航

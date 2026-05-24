@@ -5,8 +5,8 @@ from typing import Final
 from homeassistant.const import Platform
 
 # --- 基础信息 ---
-DOMAIN: Final = "qweather"
-VERSION: Final = "1.0.0"
+DOMAIN: Final = "qweather_pro)"
+VERSION: Final = "1.0.3"
 MANUFACTURER: Final = "QWeather Pro"
 ATTRIBUTION: Final = "Data provided by QWeather Pro"
 

@@ -31,7 +31,7 @@ from .const import (
     CONF_ALERT,
     CONF_GIRD,
     CONF_CUSTOM_UI,
-    LOGGER,
+    LOGGER, # 统一使用来自 const 的 LOGGER
 )
 
 DEFAULT_HOST = "api.qweather.com"

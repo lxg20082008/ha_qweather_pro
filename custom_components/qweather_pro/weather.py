@@ -18,13 +18,12 @@ from homeassistant.const import (
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, MANUFACTURER, ATTRIBUTION, CONF_CUSTOM_UI
+from .const import DOMAIN, ATTRIBUTION, CONF_CUSTOM_UI
 from .coordinator import QWeatherUpdateCoordinator
 
 # 定义天气描述符
 QWEATHER_WEATHER_DESCRIPTION = WeatherEntityDescription(
     key="weather",
-    # name="Weather",
     translation_key="weather",
     icon="mdi:weather-partly-cloudy",
 )
@@ -217,7 +216,6 @@ class HeFengWeather(CoordinatorEntity[QWeatherUpdateCoordinator], WeatherEntity)
 
         # 4. 自定义 UI 触发标志 (保持对 Lovelace 卡片的兼容)
         if self.coordinator.entry.options.get(CONF_CUSTOM_UI):
-            # 2026.5 推荐的新属性名，用于挂载自定义详情面板
             attrs["custom_ui_more_info"] = "qweather-more-info"
 
         return attrs

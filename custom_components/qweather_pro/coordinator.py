@@ -81,33 +81,12 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._last_update_times: dict[str, float] = {}
 
     def _should_update(self, category: str, ttl: int) -> bool:
-        """
-        检查特定类别的数据是否需要更新。
-        包含深夜（00:00 - 05:00）自动降频逻辑，以节省 API 额度。
-        """
+        """分时更新判断."""
         now_ts = time.time()
         now_dt = dt_util.now()
-        
-        # 1. 定义深夜降频时段：凌晨 0 点整 到 5 点之前（04:59:59）
-        # 5 点一到，此判断为 False，立即恢复正常 TTL
         is_night = 0 <= now_dt.hour < 5
-        
-        # 2. 计算实际生效的 TTL (有效期)
-        # 如果是深夜，将传入的 TTL 延长 2 倍
-        # 例如：分钟降水 15分钟 -> 30分钟；每日预报 2小时 -> 4小时
         actual_ttl = ttl * 2 if is_night else ttl
-        
-        # 3. 获取该类别数据上一次成功更新的时间戳
-        last_time = self._last_update_times.get(category, 0)
-        
-        # 4. 核心判定：当前时间与上次更新时间的差值是否超过了实际 TTL
-        result = (now_ts - last_time) > actual_ttl
-
-        # 调试日志：可以帮助您在日志中观察降频是否生效
-        if result and is_night:
-            LOGGER.debug("QWeather 深夜降频模式生效: %s 将在 %s 秒后更新", category, actual_ttl)
-
-        return result
+        return (now_ts - self._last_update_times.get(category, 0)) > actual_ttl
 
     def _to_f(self, val: Any, default: float | None = None) -> float | None:
         """数值安全转换工具."""
@@ -125,7 +104,7 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         options = self.entry.options
 
         use_grid = options.get(CONF_GIRD, False)
-        api_type = "grid-weather" if use_grid else "weather"
+        api_type = "grid-weather" if options.get(CONF_GIRD, False) else "weather"
 
         # --- A. 构建并发请求队列 ---
         
@@ -175,23 +154,25 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     self._cache_data[category] = res
                     self._last_update_times[category] = now_ts
                     success_any = True
-                elif isinstance(res, Exception):
-                    LOGGER.debug("和风天气：端点 %s 刷新跳过或失败: %s", category, res)
 
             if success_any:
-                if self._consecutive_failures > 0:
-                    LOGGER.info("和风天气：通信已恢复正常，回归标准刷新频率")
+                # 成功后恢复正常频率
                 self._consecutive_failures = 0
                 self.update_interval = self._base_interval
             else:
-                raise UpdateFailed("所有 API 抓取任务均失败")
+                raise UpdateFailed("Connection error")
 
         except Exception as err:
             self._consecutive_failures += 1
-            # 连续失败 2 次以上进入 1 小时退让期
-            if self._consecutive_failures >= 2:
+            
+            # 如果内存里已经有老数据(之前成功过)，才进入 1 小时退让模式
+            if self._cache_data.get("now") and self._consecutive_failures >= 2:
                 self.update_interval = timedelta(hours=1)
-                LOGGER.warning("和风天气：持续连接失败，进入退让模式（1小时/次），错误: %s", err)
+                LOGGER.warning("和风天气：持续连接失败，进入退让模式（1小时/次）")
+            else:
+                # 如果是冷启动（没有任何数据），为了让 UI 尽快出现，保持 2 分钟一次的快速重试
+                self.update_interval = timedelta(minutes=2)
+                LOGGER.debug("和风天气：冷启动连接失败，将在 2 分钟后重试...")
 
         # --- C. 数据解析 (组装返回字典) ---
         c = self._cache_data

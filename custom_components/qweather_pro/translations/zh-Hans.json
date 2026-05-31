@@ -54,18 +54,33 @@
     "sensor": {
       "aqi": {
         "name": "空气质量",
+        "state":{
+          "Unknown": "未知"
+        },
         "state_attributes": {
           "aqi_value": { "name": "AQI 数值" },
           "aqi_level": { "name": "空气质量等级" },
-          "primary_pollutant": { "name": "主要污染物" },
+          "primary_pollutant": { 
+            "name": "主要污染物",
+            "state":{
+              "None": "无"
+            }          
+          },
           "pm2p5": { "name": "PM2.5" },
           "pm10": { "name": "PM10" },
           "no2": { "name": "二氧化氮(NO₂)" },
           "so2": { "name": "二氧化硫(SO₂)" },
           "o3": { "name": "臭氧(O₃)" },
           "co": { "name": "一氧化碳(CO)" },
-          "health_effect": { "name": "健康影响" },
-          "health_advice": { "name": "健康建议" }
+          "health_effect": { 
+            "name": "健康影响",
+            "state":{
+              "No data available": "暂无数据",
+              "Please refer to the recommendations of the local meteorological authorities": "请参考当地气象部门建议"
+            }
+          },
+          "health_advice": { "name": "健康建议" },
+          "stations": { "name": "监测站信息", "state":{ "No monitoring station information available": "暂无监测站信息" } }
         },
         "unit_of_measurement": {
           "μg/m³": "微克/立方米",
@@ -73,15 +88,33 @@
         }
       },
       "warning_info": {
-        "name": "气象预警"
+        "name": "气象预警",
+        "state": {
+          "Without warning": "无预警"
+        }
       },
       "today_temp_range": {
         "name": "今日温度范围",
+        "state":{
+          "Unknown": "未知"
+        },
         "state_attributes": { "max_temp": { "name": "最高温度" }, "min_temp": { "name": "最低温度" } }        
       },
       "precipitation_summary": {
         "name": "降水简报",
-        "state_attributes": { "detail": { "name": "细节" } }
+        "state":{
+          "No precipitation in the next two hours": "未来两小时无降水"
+        },
+        "state_attributes": { 
+          "detail": { 
+            "name": "细节", 
+            "state":{ 
+              "fxtime": "时间", 
+              "precip": "降水",
+              "type": "类型"
+            } 
+          } 
+        }
       },
       "weather_summary": {
         "name": "天气概况"

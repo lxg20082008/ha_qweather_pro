@@ -27,15 +27,14 @@ class QWeatherSensorEntityDescription(SensorEntityDescription):
 SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
     QWeatherSensorEntityDescription(
         key="aqi",
-        # name="AQI",
         translation_key="aqi",
         icon="mdi:air-filter",
-        value_fn=lambda data: data.get("aqi", {}).get("category", "未知"),
+        value_fn=lambda data: data.get("aqi", {}).get("category", "Unknown"),
         attr_fn=lambda data: {
             # 基础数据
             "aqi_value": (aqi := data.get("aqi", {})).get("aqi"),
             "aqi_level": aqi.get("level"),
-            "primary_pollutant": aqi.get("primary", "无"),
+            "primary_pollutant": aqi.get("primary", "None"),
 
             # 污染物浓度 (带单位，且增加空值保护)
             # 使用 get(..., '--') 确保在数据缺失时不会显示 'None μg/m3'
@@ -47,22 +46,21 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
             "co": f"{aqi.get('co', '--')} {aqi.get('co_unit', 'ppm')}",
 
             # 健康建议 (V1 接口的精华字段)
-            "health_effect": aqi.get("health_effect", "暂无数据"),
-            "health_advice": aqi.get("health_advice", "请参考当地气象部门建议"),
+            "health_effect": aqi.get("health_effect", "No data available"),
+            "health_advice": aqi.get("health_advice", "Please refer to the recommendations of the local meteorological authorities"),
 
             # 监测站信息
-            "stations": aqi.get("stations", []),
+            "stations": aqi.get("stations", "No monitoring station information available"),
         },
     ),
     QWeatherSensorEntityDescription(
         key="today_temp_range",
-        # name="Today Temperature Range",
         translation_key="today_temp_range",
         icon="mdi:thermometer-lines",
         value_fn=lambda data: (
             f"{int(daily[0].get('native_templow'))}°C/"
             f"{int(daily[0].get('native_temperature'))}°C"
-            if (daily := data.get("daily")) else "未知"
+            if (daily := data.get("daily")) else "Unknown"
         ),
         attr_fn=lambda data: {
             "max_temp": f"{daily[0].get('native_temperature')}°C" if (daily := data.get("daily")) and len(daily) > 0 else None,
@@ -73,7 +71,7 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
         key="warning_info",
         translation_key="warning_info",
         icon="mdi:alert-decagram",
-        value_fn=lambda data: data.get("warning", [{}])[0].get("title", "无预警") if data.get("warning") else "无预警",
+        value_fn=lambda data: data.get("warning", [{}])[0].get("title", "Without warning") if data.get("warning") else "Without warning",
         attr_fn=lambda data: {
             "alerts": data.get("warning", [])
         },
@@ -82,14 +80,13 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
         key="precipitation_summary",
         translation_key="precipitation_summary",
         icon="mdi:message-text-clock",
-        value_fn=lambda data: data.get("minutely_summary", "未来两小时无降水"),
+        value_fn=lambda data: data.get("minutely_summary", "No precipitation in the next two hours"),
         attr_fn=lambda data: {
             "detail": data.get("minutely_detail", [])
         },
     ),
     QWeatherSensorEntityDescription(
         key="weather_summary",
-        # name="Weather Summary",
         translation_key="weather_summary",
         icon="mdi:weather-partly-cloudy",
         value_fn=lambda data: data.get("hourly_summary"),

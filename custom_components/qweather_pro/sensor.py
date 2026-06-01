@@ -72,9 +72,9 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
         translation_key="warning_info",
         icon="mdi:alert-decagram",
         value_fn=lambda data: data.get("warning", [{}])[0].get("title", "Without warning") if data.get("warning") else "Without warning",
-        attr_fn=lambda data: {
-            "alerts": data.get("warning", [])
-        },
+        attr_fn=lambda data: (
+            data.get("warning")[0] if data.get("warning") and len(data.get("warning")) > 0 else {}
+        ),
     ),
     QWeatherSensorEntityDescription(
         key="precipitation_summary",

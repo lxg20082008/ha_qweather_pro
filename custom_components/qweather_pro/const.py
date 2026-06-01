@@ -44,7 +44,6 @@ ATTR_SUGGESTION: Final = "suggestion"
 
 # --- 默认值 ---
 DEFAULT_NAME: Final = "和风天气Pro"
-DEFAULT_HOST: Final = "api.qweather.com"
 DEFAULT_UPDATE_INTERVAL: Final = 15
 
 # --- 生活指数类型映射 (QWeather API v7) ---

@@ -1,80 +1,42 @@
 /**
- * QWeather More Info - Suggestion Focused Version (2026.5 Optimized)
+ * QWeather More Info 
  */
+
 (async () => {
-  // 必须确保 HA 的基础组件已加载
   await customElements.whenDefined("ha-card");
 
-  const LitElement = window.LitElement || Object.getPrototypeOf(customElements.get("ha-card"));
-  const html = LitElement.prototype.html;
-  const css = LitElement.prototype.css;
+  const Lit = window.LitElement || Object.getPrototypeOf(customElements.get("ha-card"));
+  const html = Lit.prototype.html;
+  const css = Lit.prototype.css;
+  const I18N = window.QW_I18N;
+  const stripUnit = (v) => (v || "").toString().replace(/[^\d.-]/g, "");
 
-  class QWeatherMoreInfo extends LitElement {
+  class QWeatherMoreInfo extends Lit {
     static get properties() {
-      return {
-        hass: { type: Object },
-        // 关键：HA 详情弹窗默认传递的对象名是 stateObj
-        stateObj: { type: Object }
-      };
+      return { hass: {}, stateObj: {}, _lang: {} };
     }
 
-    render() {
-      // 如果没有拿到数据对象，显示加载状态而非空白
-      if (!this.stateObj) {
-        return html`<div style="padding: 30px; text-align: center;">正在同步天气详情...</div>`;
-      }
+    constructor() {
+      super();
+      this._lang = "en";
+    }
 
-      const attr = this.stateObj.attributes;
+    _detectLang(hass) {
+      const lang = hass.selectedLanguage || hass.language || "en";
+      this._lang = I18N[lang] ? lang : "en";
+    }
 
-      // 数据清洗：处理 AQI 对象结构
-      const aqiVal = attr.aqi?.aqi || '--';
-      const aqiCat = attr.aqi?.aqi_category || '未知';
+    _t(k) {
+      return I18N[this._lang][k] || I18N.en[k] || k;
+    }
 
-       // 指数筛选
-      const primaryTypes = ["comf", "drsg", "uv", "sport", "flu", "cw", "dc", "trav"];
-      const suggestions = (attr.suggestion || [])
-        .filter(s => primaryTypes.includes(s.type))
-        .slice(0, 8);
+    set hass(hass) {
+      this._hass = hass;
+      this._detectLang(hass);
+    }
 
-      return html`
-        <div class="content">
-          <div class="header-row">
-            <div class="main-info">
-              <div class="weather-icon" style="background-image: url(${this._getIcon(attr.qweather_icon)})"></div>
-              <div>
-                <div class="state-text">${attr.condition_cn || this.stateObj.state}</div>
-                <div class="obs-time">观测时间: ${attr.obs_time || '--'}</div>
-              </div>
-            </div>
-            <div class="temp-text">${Math.round(attr.temperature)}<sup>°C</sup></div>
-          </div>
-
-          <div class="attr-grid">
-            ${this._renderAttr('mdi:water-percent', '湿度', `${attr.humidity}%`)}
-            ${this._renderAttr('mdi:thermometer-plus', '体感', `${attr.feels_like}°C`)}
-            ${this._renderAttr('mdi:weather-windy', '风向风力', `${attr.wind_dir} ${attr.wind_scale}级`)}
-            ${this._renderAttr('mdi:air-filter', '空气质量', `${aqiVal} ${aqiCat}`)}
-          </div>
-
-          <div class="section-title">生活指数建议</div>
-          <div class="suggestion-list">
-            ${suggestions.length === 0 ? html`<div class="no-data">暂无指数信息</div>` : ''}
-            ${suggestions.map(s => html`
-              <div class="suggestion-row">
-                <div class="s-header">
-                  <span class="s-name">${s.title_cn || s.title}</span>
-                  <span class="s-brf">${s.brf}</span>
-                </div>
-                <span class="s-text">${s.txt || s.text}</span>
-              </div>
-            `)}
-          </div>
-
-          <div class="footer">
-            数据源: QWeather | 更新于: ${attr.update_time || '刚刚'}
-          </div>
-        </div>
-      `;
+    _getIcon(code) {
+      return `/qweather-local/qweather-card/icons/${code || "100"}.svg`;
     }
 
     _renderAttr(icon, label, value) {
@@ -89,42 +51,152 @@
       `;
     }
 
-    _getIcon(code) {
-      return `/qweather-local/qweather-card/icons/${code || '100'}.svg`;
+    _renderLifeIndex(list) {
+      if (!list || !list.length)
+        return html`<div class="no-data">${this._t("no_suggestions")}</div>`;
+
+      return html`
+        <div class="life-list">
+          ${list.map(i => html`
+            <div class="life-item">
+              <div class="life-header">
+                <span class="life-title">${i.title}</span>
+                <span class="life-brf">${i.brf}</span>
+              </div>
+              <div class="life-text">${i.txt}</div>
+            </div>
+          `)}
+        </div>
+      `;
+    }
+
+    render() {
+      if (!this.stateObj)
+        return html`<div style="padding:30px;text-align:center;">${this._t("loading")}</div>`;
+
+      const a = this.stateObj.attributes;
+      const aqiVal = a.aqi?.aqi || "--";
+      const aqiCat = a.aqi?.aqi_category || (this._lang === "zh" ? "未知" : "Unknown");
+
+      const lifeTypes = ["drsg", "uv", "cw", "sport"];
+      const lifeList = (a.suggestion || []).filter(i => lifeTypes.includes(i.type));
+
+      return html`
+        <div class="content">
+
+          <!-- 顶部 -->
+          <div class="header-row">
+            <div class="main-info">
+              <div class="weather-icon" style="background-image:url(${this._getIcon(a.qweather_icon)})"></div>
+              <div>
+                <div class="state-text">${a.condition_cn || this.stateObj.state}</div>
+                <div class="obs-time">${this._t("observed")}: ${a.obs_time || "--"}</div>
+              </div>
+            </div>
+            <div class="temp-text">${Math.round(a.temperature)}<sup>°C</sup></div>
+          </div>
+
+          <!-- 即时天气 6 项 -->
+          <div class="section-title">${this._t("instant_weather")}</div>
+          <div class="grid-3x2">
+            ${this._renderAttr("mdi:thermometer", this._t("pressure"), `${a.pressure} hPa`)}
+            ${this._renderAttr("mdi:thermometer-plus", this._t("feels_like"), `${a.feels_like}°C`)}
+            ${this._renderAttr("mdi:compass", this._t("wind_dir"), a.wind_dir || "--")}
+            ${this._renderAttr("mdi:weather-windy", this._t("wind_scale"), `${a.wind_scale}${this._t("level")}`)}
+            ${this._renderAttr("mdi:water-percent", this._t("humidity"), `${a.humidity}%`)}
+            ${this._renderAttr("mdi:eye", this._t("visibility"), `${a.visibility} km`)}
+          </div>
+
+          <!-- 空气质量 8 项（4×2） -->
+          <div class="section-title">${this._t("aqi")}</div>
+          <div class="grid-4x2">
+            ${this._renderAttr("mdi:air-filter", this._t("aqi"), aqiVal)}
+            ${this._renderAttr("mdi:alert-circle", this._t("aqi_cat"), aqiCat)}
+            ${this._renderAttr("mdi:blur", "PM2.5", stripUnit(a.aqi?.pollutants?.pm2p5) || "--")}
+            ${this._renderAttr("mdi:blur", "PM10", stripUnit(a.aqi?.pollutants?.pm10) || "--")}
+            ${this._renderAttr("mdi:chemical-weapon", "NO₂", stripUnit(a.aqi?.pollutants?.no2) || "--")}
+            ${this._renderAttr("mdi:chemical-weapon", "SO₂", stripUnit(a.aqi?.pollutants?.so2) || "--")}
+            ${this._renderAttr("mdi:weather-hazy", "O₃", stripUnit(a.aqi?.pollutants?.o3) || "--")}
+            ${this._renderAttr("mdi:molecule-co", "CO", stripUnit(a.aqi?.pollutants?.co) || "--")}
+
+          </div>
+
+          <!-- 日月信息 4×1 -->
+          <div class="section-title">${this._t("sun_moon")}</div>
+          <div class="grid-4x1">
+            ${this._renderAttr("mdi:weather-sunset-up", this._t("sunrise"), a.sunrise || "--")}
+            ${this._renderAttr("mdi:weather-sunset-down", this._t("sunset"), a.sunset || "--")}
+            ${this._renderAttr("mdi:arrow-up-bold-circle-outline", this._t("moonrise"), a.moonrise || "--")}
+            ${this._renderAttr("mdi:arrow-down-bold-circle-outline", this._t("moonset"), a.moonset || "--")}
+          </div>
+
+          <!-- 生活指数 4 项 -->
+          <div class="section-title">${this._t("lifestyle_title")}</div>
+          ${this._renderLifeIndex(lifeList)}
+
+          <!-- 页脚 -->
+          <div class="footer">
+            ${this._t("data_source")}: QWeather |
+            ${this._t("update_at")}: ${a.update_time || this._t("just_now")}
+          </div>
+        </div>
+      `;
     }
 
     static get styles() {
       return css`
-        .content { padding: 0 16px 20px 16px; color: var(--primary-text-color); }
-        .header-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
-        .main-info { display: flex; align-items: center; }
-        .weather-icon { width: 64px; height: 64px; background-size: contain; margin-right: 16px; background-repeat: no-repeat; background-position: center; }
-        .state-text { font-size: 24px; font-weight: 500; }
-        .obs-time { font-size: 12px; opacity: 0.6; margin-top: 4px; }
-        .temp-text { font-size: 44px; font-weight: 300; }
-        .temp-text sup { font-size: 20px; }
+        .content { padding:16px; color:var(--primary-text-color); }
 
-        .attr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .attr-item { background: var(--secondary-background-color); padding: 12px 14px; border-radius: 12px; display: flex; align-items: center; }
-        .attr-item ha-icon { margin-right: 12px; color: var(--primary-color); --mdc-icon-size: 22px; }
-        .attr-label { font-size: 11px; color: var(--secondary-text-color); }
-        .attr-value { font-size: 15px; font-weight: 600; }
+        .header-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .main-info { display:flex; align-items:center; }
+        .weather-icon { width:60px; height:60px; background-size:contain; background-repeat:no-repeat; margin-right:14px; }
+        .state-text { font-size:22px; font-weight:500; }
+        .obs-time { font-size:12px; opacity:.6; margin-top:4px; }
+        .temp-text { font-size:42px; font-weight:300; }
+        .temp-text sup { font-size:18px; }
 
-        .section-title { font-size: 16px; font-weight: bold; margin: 20px 0 12px 0; }
-        .suggestion-list { display: flex; flex-direction: column; gap: 10px; }
-        .suggestion-row { padding: 14px; border-radius: 12px; border-left: 5px solid var(--primary-color); background: var(--secondary-background-color); }
-        .s-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-weight: bold; }
-        .s-name { font-size: 14px; }
-        .s-brf { color: var(--primary-color); font-size: 14px; }
-        .s-text { color: var(--secondary-text-color); font-size: 13px; line-height: 1.5; display: block; }
-        .no-data { text-align: center; opacity: 0.5; padding: 20px; }
-        .footer { text-align: center; font-size: 10px; color: var(--secondary-text-color); margin-top: 25px; opacity: 0.6; }
+        .grid-3x2 {
+          display:grid;
+          grid-template-columns:repeat(3,1fr);
+          gap:14px;
+          margin-bottom:24px;
+        }
+
+        .grid-4x2 {
+          display:grid;
+          grid-template-columns:repeat(4,1fr);
+          gap:14px;
+          margin-bottom:24px;
+        }
+
+        .grid-4x1 {
+          display:grid;
+          grid-template-columns:repeat(4,1fr);
+          gap:14px;
+          margin-bottom:24px;
+        }
+
+        .attr-item { background:var(--secondary-background-color); padding:12px 14px; border-radius:12px; display:flex; align-items:center; min-width:0; }
+        .attr-item ha-icon { margin-right:12px; color:var(--primary-color); --mdc-icon-size:22px; }
+        .attr-label { font-size:11px; color:var(--secondary-text-color); white-space:normal; word-break:break-word; line-height:1.2; }
+        .attr-value { font-size:15px; font-weight:600; }
+
+        .section-title { font-size:15px; font-weight:bold; margin:18px 0 10px; border-left:4px solid var(--primary-color); padding-left:8px; }
+
+        .life-list { display:flex; flex-direction:column; gap:12px; }
+        .life-item { padding:12px; border-radius:10px; background:var(--secondary-background-color); }
+        .life-header { display:flex; justify-content:space-between; font-weight:bold; margin-bottom:6px; }
+        .life-title { font-size:14px; }
+        .life-brf { color:var(--primary-color); font-size:14px; }
+        .life-text { font-size:13px; color:var(--secondary-text-color); line-height:1.5; }
+
+        .no-data { text-align:center; opacity:.6; padding:10px; font-size:13px; }
+        .footer { text-align:center; font-size:11px; opacity:.6; margin-top:20px; }
       `;
     }
   }
 
-  // 注册组件
-  if (!customElements.get("qweather-more-info")) {
+  if (!customElements.get("qweather-more-info"))
     customElements.define("qweather-more-info", QWeatherMoreInfo);
-  }
+
 })();

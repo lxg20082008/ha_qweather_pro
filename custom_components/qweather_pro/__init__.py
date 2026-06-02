@@ -36,7 +36,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: QWeatherConfigEntry) -> 
             # 注入资源：主卡片与详情页 JS
             assets = [
                 f"/qweather-local/qweather-card/qweather-card.js?v={version}",
-                f"/qweather-local/qweather-card/qweather-more-info.js?v={version}"
+                f"/qweather-local/qweather-card/qweather-more-info.js?v={version}",
+                f"/qweather-local/qweather-card/qweather-i18n.js?v={version}"
             ]
             
             for url in assets:

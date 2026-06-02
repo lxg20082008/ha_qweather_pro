@@ -1,5 +1,3 @@
-# 使用指南 (Documentation)
-
 # Documentation (Usage Guide)
 
 ## ⚙️ Configuration

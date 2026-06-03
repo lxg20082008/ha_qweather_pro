@@ -1,35 +1,52 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
         "title": "QWeather Pro konfigurieren",
-        "description": "### ⚙️ Einrichtungsschritte \n **Öffnen Sie die [QWeather-Konsole](https://console.qweather.com):** \n 1. Kopieren Sie in den Einstellungen den **API Host** und tragen Sie ihn unten ein. \n 2. Projektverwaltung → Projekt erstellen und Anmeldedaten hinzufügen: **JSON Web Token** oder **API KEY**.\n 3. Standort unterstützt nur Längen‑ und Breitengrad (WGS‑84). Beispiel: 116.40,39.90. \n Standardmäßig wird der HA‑Standort verwendet. \n #### Hinweis: Die **API KEY**‑Authentifizierung bietet keine ausreichende Sicherheit und unterliegt Anfragebeschränkungen. Die Verwendung von **JSON Web Token (JWT)** wird empfohlen!",
+        "description": "### ⚙️ Einrichtungsschritte\n **Öffnen Sie die [QWeather-Konsole](https://console.qweather.com):**\n 1. Kopieren Sie in den Einstellungen den **API Host** und tragen Sie ihn unten ein.\n 2. Projektverwaltung → Projekt erstellen und Anmeldedaten hinzufügen: **JSON Web Token** oder **API KEY**.\n 3. Der Standort unterstützt nur Koordinaten (WGS‑84), z. B.: 116.40,39.90.\n Standardmäßig wird der Standort von Home Assistant verwendet.\n #### Hinweis: Die **API KEY**‑Authentifizierung bietet keine ausreichende Sicherheit und unterliegt Anfragebeschränkungen. Die Verwendung von **JSON Web Token (JWT)** wird dringend empfohlen!",
         "data": {
           "host": "API‑Serveradresse (API Host)",
-          "location_id": "Standort — nur Längen‑/Breitengrad (Längengrad zuerst).",
+          "location_id": "Standort (nur Koordinaten, Längengrad zuerst)",
           "use_token": "JWT‑Authentifizierung verwenden (empfohlen, sicherer)",
-          "api_key": "Standard‑API‑Schlüssel (leer lassen, wenn JWT verwendet wird)"
+          "api_key": "Standard‑API‑Key (bei JWT leer lassen)"
         }
       },
       "jwt_setup": {
-        "title": "JWT‑Sicherheitsauthentifizierung einrichten",
-        "description": "Das System hat automatisch einen öffentlichen Schlüssel generiert.\n\n**Schritte:**\n1. Kopieren Sie den **öffentlichen Schlüssel** unten.\n2. Öffnen Sie die [QWeather‑Konsole](https://console.qweather.com), fügen Sie im Projekt Anmeldedaten hinzu, wählen Sie **JSON Web Token** und fügen Sie den öffentlichen Schlüssel ein.\n\n```text\n{public_key}\n```\n\nGeben Sie anschließend **Project ID** und **Key ID** unten ein.",
+        "title": "JWT‑Sicherheitsauthentifizierung konfigurieren",
+        "description": "Ein öffentlicher Schlüssel wurde automatisch generiert.\n\n**Schritte:**\n1. Kopieren Sie den **öffentlichen Schlüssel** unten.\n2. Öffnen Sie die [QWeather‑Konsole](https://console.qweather.com), fügen Sie dem Projekt Anmeldedaten hinzu, wählen Sie **JSON Web Token** und fügen Sie den Schlüssel ein.\n\n```text\n{public_key}\n```\n\nGeben Sie anschließend unten die **Projekt‑ID** und **Schlüssel‑ID** ein.\n### Hinweis: JWT kann nur einmal hinzugefügt werden. Wenn die Integration erneut hinzugefügt wird, ist das ursprüngliche JWT ungültig.",
         "data": {
           "project_id": "Projekt‑ID (Project ID)",
           "key_id": "Schlüssel‑ID (Key ID)"
         }
+      },
+      "select_location": {
+        "title": "Standort bestätigen",
+        "description": "Mehrere passende Regionen wurden gefunden. Bitte wählen Sie die genaueste aus:",
+        "data": {
+          "location_index": "Liste der passenden Standorte"
+        }
+      },
+      "reconfigure": {
+        "title": "Authentifizierungsdaten neu konfigurieren",
+        "description": "Die Integration funktioniert möglicherweise nicht mehr aufgrund ungültiger Authentifizierung. Bitte aktualisieren Sie hier Ihren API Host oder Schlüssel.",
+        "data": {
+          "host": "API Host",
+          "api_key": "API‑Schlüssel"
+        }
+      },
+      "error": {
+        "cannot_connect": "Netzwerkverbindung fehlgeschlagen, bitte API Host überprüfen",
+        "invalid_auth": "Authentifizierung fehlgeschlagen, bitte Key oder JWT prüfen",
+        "jwt_error": "JWT‑Signatur konnte nicht erzeugt werden",
+        "api_key_missing": "Im Standardmodus muss ein API Key angegeben werden",
+        "api_host_deprecated": "Öffentliche Domains werden nicht mehr unterstützt, bitte persönlichen API Host verwenden",
+        "location_not_found": "Standort nicht gefunden, bitte Koordinaten eingeben"
+      },
+      "abort": {
+        "already_configured": "Dieser Standort wurde bereits konfiguriert",
+        "reconfigure_successful": "Konfiguration erfolgreich aktualisiert!"
       }
-    },
-    "error": {
-      "cannot_connect": "Verbindung zum Server fehlgeschlagen",
-      "invalid_auth": "Authentifizierung fehlgeschlagen",
-      "jwt_error": "JWT‑Signatur fehlgeschlagen",
-      "api_key_missing": "Der Standardmodus erfordert einen API‑Schlüssel",
-      "location_not_found": "Standort nicht gefunden",
-      "api_host_deprecated": "Öffentliche API ist veraltet, bitte neuen API Host verwenden"
-    },
-    "abort": {
-      "already_configured": "Dieser Standort ist bereits konfiguriert"
     }
   },
 
@@ -37,13 +54,13 @@
     "step": {
       "init": {
         "title": "Optionen konfigurieren",
-        "description": "### 💡 Nutzungshinweise\n- Die tägliche Wettervorhersage unterstützt **3d/7d/15d/30d**, die Gitter‑Tagesvorhersage nur **3d/7d**. \n- Die stündliche Vorhersage unterstützt **24h/72h/168h**, die Gitter‑Stundenvorhersage nur **24h/72h**.\n- **Gitterwetter**: Nach Aktivierung der hochpräzisen Gitter‑API sind einige Beobachtungsdaten (z. B. **Sichtweite**) nicht verfügbar und werden als `--` angezeigt.",
+        "description": "### 💡 Hinweise zur Nutzung\n- Die tägliche Vorhersage kann **3/7/15/30 Tage** umfassen. Gitter‑Tagesvorhersagen unterstützen nur **3/7 Tage**.\n- Die stündliche Vorhersage kann **24/72/168 Stunden** umfassen. Gitter‑Stundenvorhersagen unterstützen nur **24/72 Stunden**.\n- **Gitterwetter**: Wenn die hochpräzise Gitter‑API aktiviert ist, sind einige Echtzeitdaten (z. B. **Sichtweite**) nicht verfügbar und werden als `--` angezeigt.",
         "data": {
           "update_interval": "Aktualisierungsintervall (Minuten)",
-          "dailysteps": "Tägliche Vorhersagetage (3‑30)",
-          "hourlysteps": "Stündliche Vorhersage (24‑168 Stunden)",
-          "gird": "Hochpräzises Gitterwetter verwenden (V7 Grid API)",
-          "custom_ui": "Benutzerdefinierte UI aktivieren"
+          "dailysteps": "Tägliche Vorhersagetage (3–30)",
+          "hourlysteps": "Stündliche Vorhersage (24–168)",
+          "gird": "Hochpräzises Gitterwetter (V7 Grid API) verwenden",
+          "custom_ui": "Benutzerdefinierte UI‑Unterstützung aktivieren"
         }
       }
     }
@@ -75,14 +92,14 @@
             "name": "Gesundheitliche Auswirkungen",
             "state": {
               "No data available": "Keine Daten verfügbar",
-              "Please refer to the recommendations of the local meteorological authorities": "Bitte beachten Sie die Empfehlungen der örtlichen Wetterbehörden"
+              "Please refer to the recommendations of the local meteorological authorities": "Bitte Empfehlungen der lokalen Wetterbehörden beachten"
             }
           },
           "health_advice": { "name": "Gesundheitshinweise" },
           "stations": {
-            "name": "Stationsinformationen",
+            "name": "Messstationen",
             "state": {
-              "No monitoring station information available": "Keine Stationsinformationen verfügbar"
+              "No monitoring station information available": "Keine Stationsdaten verfügbar"
             }
           }
         },
@@ -102,7 +119,7 @@
           "sender": { "name": "Herausgeber" },
           "issued": { "name": "Ausgabezeit" },
           "title": { "name": "Warnungstitel" },
-          "text": { "name": "Warnungstext" },
+          "text": { "name": "Warnungsinhalt" },
           "instruction": { "name": "Handlungsempfehlung" },
           "level": {
             "name": "Warnstufe",
@@ -148,8 +165,35 @@
 
       "weather_summary": {
         "name": "Wetterübersicht",
-        "state": {
-          "The weather has been stable recently": "Das Wetter war in letzter Zeit stabil"
+        "state_attributes": {
+          "display_state": { "name": "Anzeigestatus" },
+          "period": {
+            "name": "Aktueller Zeitraum",
+            "state": {
+              "morning": "Heute tagsüber",
+              "afternoon": "Heute Nachmittag",
+              "evening": "Heute Abend",
+              "night": "Morgen"
+            }
+          },
+          "temp_change_type": {
+            "name": "Temperaturtrend",
+            "state": {
+              "heat_surge": "Starker Anstieg",
+              "warmer": "Steigend",
+              "steady": "Stabil",
+              "colder": "Fallend",
+              "cold_snap": "Starker Abfall"
+            }
+          },
+          "uv_risk": {
+            "name": "UV‑Intensität",
+            "state": {
+              "normal": "Mittel",
+              "high": "Sehr hoch"
+            }
+          },
+          "tonight_text": { "name": "Wetter heute Abend" }
         }
       }
     },
@@ -174,17 +218,17 @@
           "moon_phase": { "name": "Mondphase" },
           "moonrise": { "name": "Mondaufgang" },
           "moonset": { "name": "Monduntergang" },
-          "minutely_summary": { "name": "Minütliche Wetterübersicht" },
-          "hourly_summary": { "name": "Stündliche Wetterübersicht" },
+          "minutely_summary": { "name": "Minütliche Zusammenfassung" },
+          "hourly_summary": { "name": "Stündliche Zusammenfassung" },
           "aqi": { "name": "Luftqualitätsindex" },
           "city": { "name": "Stadt" },
-          "warning": { "name": "Warnung" },
+          "warning": { "name": "Warninformationen" },
           "suggestion": { "name": "Lebenshinweise" }
         },
         "unit_of_measurement": {
           "°C": "Grad Celsius",
           "mmHg": "Millimeter Quecksilbersäule",
-          "km/h": "km/h",
+          "km/h": "Kilometer pro Stunde",
           "km": "Kilometer",
           "mm": "Millimeter"
         }

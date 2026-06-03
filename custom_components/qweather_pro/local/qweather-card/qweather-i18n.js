@@ -14,7 +14,7 @@ window.QW_I18N = {
     wind_dir: "Wind Direction",
     wind_scale: "Wind Scale",
     level: "Level",
-    "uv-index": "UV Index",
+    uv_index: "UV Index",
     humidity: "Humidity",
     visibility: "Visibility",
     daily_forecast: "Daily Forecast",
@@ -41,6 +41,11 @@ window.QW_I18N = {
     update_at: "Updated",
     just_now: "Just now",
     weekday: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    period:{morning:"this morning",afternoon:"this afternoon",evening:"this evening",night:"tonight"},
+    temp_change_type:{heat_surge:"Heat surge",warmer:"Warmer",steady:"Steady",colder:"Colder",cold_snap:"Cold snap"},
+    uv_high:"UV index is high",
+    temp_change_prefix: "Tomorrow",
+    now_prefix: "now"
   },
   
 
@@ -58,7 +63,7 @@ window.QW_I18N = {
     wind_dir: "风向",
     wind_scale: "风力等级",
     level: "级",
-    "uv-index": "紫外线指数",
+    uv_index: "紫外线指数",
     humidity: "湿度",
     visibility: "能见度",
     daily_forecast: "每日预报",
@@ -84,7 +89,12 @@ window.QW_I18N = {
     data_source: "数据来源",
     update_at: "更新于",
     just_now: "刚刚",
-    weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
+    weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+    period:{morning:"今天早晨",afternoon:"今天下午",evening:"今天傍晚",night:"今晚"},
+    temp_change_type:{heat_surge:"气温剧升",warmer:"气温升高",steady:"温度平稳",colder:"气温降低",cold_snap:"断崖式降温"},
+    uv_high:"紫外线较强",
+    temp_change_prefix: "明天",
+    now_prefix: "当前"
   },
   
   /* -------------------- 繁體中文 -------------------- */
@@ -101,7 +111,7 @@ window.QW_I18N = {
     wind_dir: "風向",
     wind_scale: "風力等級",
     level: "級",
-    "uv-index": "紫外線指數",
+    uv_index: "紫外線指數",
     humidity: "濕度",
     visibility: "能見度",
     daily_forecast: "每日預報",
@@ -127,7 +137,12 @@ window.QW_I18N = {
     data_source: "資料來源",
     update_at: "更新於",
     just_now: "剛剛",
-    weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
+    weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+    period:{morning:"今天早晨",afternoon:"今天下午",evening:"今天傍晚",night:"今晚"},
+    temp_change_type:{heat_surge:"氣溫劇升",warmer:"氣溫升高",steady:"溫度平穩",colder:"氣溫降低",cold_snap:"斷崖式降溫"},
+    uv_high:"紫外線較強",
+    temp_change_prefix: "明天",
+    now_prefix: "當前"
   },
 
   /* -------------------- Japanese -------------------- */
@@ -170,7 +185,12 @@ window.QW_I18N = {
     data_source: "データ提供",
     update_at: "更新",
     just_now: "たった今",
-    weekday: ["日", "月", "火", "水", "木", "金", "土"]
+    weekday: ["日", "月", "火", "水", "木", "金", "土"],
+    period:{morning:"今朝",afternoon:"今日の午後",evening:"今晩",night:"今夜"},
+    temp_change_type:{heat_surge:"気温急上昇",warmer:"暖かくなる",steady:"変化なし",colder:"寒くなる",cold_snap:"急激に寒くなる"},
+    uv_high:"UV指数が高い",
+    temp_change_prefix: "明日",
+    now_prefix: "現在"
   },
 
   /* -------------------- Korean -------------------- */
@@ -213,7 +233,12 @@ window.QW_I18N = {
     data_source: "데이터 제공",
     update_at: "업데이트",
     just_now: "방금",
-    weekday: ["일", "월", "화", "수", "목", "금", "토"]
+    weekday: ["일", "월", "화", "수", "목", "금", "토"],
+    period:{morning:"오늘 아침",afternoon:"오늘 오후",evening:"오늘 저녁",night:"오늘 밤"},
+    temp_change_type:{heat_surge:"기온 급상승",warmer:"더 따뜻해짐",steady:"변화 없음",colder:"더 추워짐",cold_snap:"급격히 추워짐"},
+    uv_high:"자외선 지수가 높음",
+    temp_change_prefix: "내일",
+    now_prefix: "현재"
   },
 
   /* -------------------- French -------------------- */
@@ -256,7 +281,12 @@ window.QW_I18N = {
     data_source: "Source",
     update_at: "Mis à jour",
     just_now: "À l’instant",
-    weekday: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"]
+    weekday: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+    period:{morning:"ce matin",afternoon:"cet après-midi",evening:"ce soir",night:"cette nuit"},
+    temp_change_type:{heat_surge:"Montée de chaleur",warmer:"Plus chaud",steady:"Stable",colder:"Plus froid",cold_snap:"Vague de froid"},
+    uv_high:"Indice UV élevé",
+    temp_change_prefix: "Demain",
+    now_prefix: "maintenant"
   },
 
   /* -------------------- German -------------------- */
@@ -299,7 +329,12 @@ window.QW_I18N = {
     data_source: "Quelle",
     update_at: "Aktualisiert",
     just_now: "Gerade eben",
-    weekday: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"]
+    weekday: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    period:{morning:"heute Morgen",afternoon:"heute Nachmittag",evening:"heute Abend",night:"heute Nacht"},
+    temp_change_type:{heat_surge:"Hitzewelle",warmer:"Wärmer",steady:"Stabil",colder:"Kälter",cold_snap:"Kältewelle"},
+    uv_high:"UV-Index ist hoch",
+    temp_change_prefix: "Morgen",
+    now_prefix: "jetzt"
   },
 
   /* -------------------- Spanish -------------------- */
@@ -342,7 +377,12 @@ window.QW_I18N = {
     data_source: "Fuente",
     update_at: "Actualizado",
     just_now: "Justo ahora",
-    weekday: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
+    weekday: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+    period:{morning:"esta mañana",afternoon:"esta tarde",evening:"esta noche",night:"esta noche"},
+    temp_change_type:{heat_surge:"Oleada de calor",warmer:"Más cálido",steady:"Estable",colder:"Más frío",cold_snap:"Ola de frío"},
+    uv_high:"Índice UV alto",
+    temp_change_prefix: "Mañana",
+    now_prefix: "ahora"
   },
 
   /* -------------------- Italian -------------------- */
@@ -385,7 +425,12 @@ window.QW_I18N = {
     data_source: "Fonte",
     update_at: "Aggiornato",
     just_now: "Proprio ora",
-    weekday: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"]
+    weekday: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"],
+    period:{morning:"questa mattina",afternoon:"questo pomeriggio",evening:"questa sera",night:"questa notte"},
+    temp_change_type:{heat_surge:"Aumento di calore",warmer:"Più caldo",steady:"Stabile",colder:"Più freddo",cold_snap:"Vortice di freddo"},
+    uv_high:"Indice UV alto",
+    temp_change_prefix: "Domani",
+    now_prefix: "ora"
   },
 
   /* -------------------- Portuguese (Brazil) -------------------- */
@@ -428,7 +473,12 @@ window.QW_I18N = {
     data_source: "Fonte",
     update_at: "Atualizado",
     just_now: "Agora mesmo",
-    weekday: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+    weekday: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+    period:{morning:"esta manhã",afternoon:"esta tarde",evening:"esta noite",night:"esta noite"},
+    temp_change_type:{heat_surge:"Onda de calor",warmer:"Mais quente",steady:"Estável",colder:"Mais frio",cold_snap:"Onda de frio"},
+    uv_high:"Índice UV alto",
+    temp_change_prefix: "Amanhã",
+    now_prefix: "agora"
   },
 
   /* -------------------- Russian -------------------- */
@@ -471,7 +521,12 @@ window.QW_I18N = {
     data_source: "Источник",
     update_at: "Обновлено",
     just_now: "Только что",
-    weekday: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"]
+    weekday: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+    period:{morning:"этим утром",afternoon:"этим днем",evening:"этим вечером",night:"этой ночью"},
+    temp_change_type:{heat_surge:"Резкое повышение температуры",warmer:"Теплее",steady:"Без изменений",colder:"Холоднее",cold_snap:"Резкое похолодание"},
+    uv_high:"УФ-индекс высокий",
+    temp_change_prefix: "Завтра",
+    now_prefix: "сейчас"
   },
 
 /* -------------------- Dutch -------------------- */
@@ -514,6 +569,11 @@ window.QW_I18N = {
     data_source: "Bron",
     update_at: "Bijgewerkt",
     just_now: "Zojuist",
-    weekday: ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"]
+    weekday: ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"],
+    period:{morning:"vanmorgen",afternoon:"vandaagmiddag",evening:"vandaagavond",night:"vannacht"},
+    temp_change_type:{heat_surge:"Temperatuurstijging",warmer:"Warmer",steady:"Stabiel",colder:"Kouder",cold_snap:"Temperatuurdaling"},
+    uv_high:"UV-index is hoog",
+    temp_change_prefix: "Morgen",
+    now_prefix: "nu"
   }
 };

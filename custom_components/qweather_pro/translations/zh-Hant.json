@@ -14,23 +14,39 @@
       },
       "jwt_setup": {
         "title": "配置 JWT 安全認證",
-        "description": "系統已自動為您生成公鑰。\n\n**操作步驟：**\n1. 複製下方框中的**公鑰**。\n2. 前往[和風天氣控制台](https://console.qweather.com)，在專案中新增憑證，選擇 **JSON Web Token** 並貼上公鑰。\n\n```text\n{public_key}\n```\n\n完成後，請填寫下方的 **專案 ID** 和 **憑證 ID**。",
+        "description": "系統已為您自動生成公鑰。\n\n**操作步驟：**\n1. 複製下方框中的**公鑰**。\n2. 前往 [和風天氣控制台](https://console.qweather.com)，在專案中新增憑證，選擇 **JSON Web Token** 並貼上公鑰。\n\n```text\n{public_key}\n```\n\n完成後，請填寫下方的 **專案 ID** 與 **憑證 ID**。\n### 注：JWT 方式僅能新增一次，若重新新增整合，原有的 JWT 憑證將無法再使用。",
         "data": {
           "project_id": "專案 ID (Project ID)",
           "key_id": "憑證 ID (Key ID)"
         }
+      },
+      "select_location": {
+        "title": "確認城市位置",
+        "description": "搜尋到以下多個匹配地區，請選擇最準確的一個：",
+        "data": {
+          "location_index": "匹配的城市列表"
+        }
+      },
+      "reconfigure": {
+        "title": "重新配置認證資訊",
+        "description": "您的整合可能因認證失效而停止運作，請在此更新您的 API Host 或密鑰。",
+        "data": {
+          "host": "API Host",
+          "api_key": "API 密鑰"
+        }
+      },
+      "error": {
+        "cannot_connect": "網路連線失敗，請檢查 Host 是否正確",
+        "invalid_auth": "身份認證失敗，請檢查 Key 或 JWT",
+        "jwt_error": "JWT 簽名生成失敗",
+        "api_key_missing": "一般模式下必須填寫 API Key",
+        "api_host_deprecated": "公共網域已失效，請使用個人 API Host",
+        "location_not_found": "未找到該位置，請嘗試輸入經緯度"
+      },
+      "abort": {
+        "already_configured": "該地理位置已被配置",
+        "reconfigure_successful": "配置已成功更新！"
       }
-    },
-    "error": {
-      "cannot_connect": "無法連接到伺服器",
-      "invalid_auth": "身份驗證失敗",
-      "jwt_error": "JWT 簽名失敗",
-      "api_key_missing": "標準模式需要 API Key",
-      "location_not_found": "找不到該地理位置",
-      "api_host_deprecated": "公共 API 已廢棄，請使用新的 API Host"
-    },
-    "abort": {
-      "already_configured": "該地理位置已被配置"
     }
   },
 
@@ -149,8 +165,35 @@
 
       "weather_summary": {
         "name": "天氣概況",
-        "state": {
-          "The weather has been stable recently": "近期天氣平穩"
+        "state_attributes": {
+          "display_state": { "name": "顯示狀態" },
+          "period": {
+            "name": "當前時段",
+            "state": {
+              "morning": "今天白天",
+              "afternoon": "今天下午",
+              "evening": "今晚",
+              "night": "明天"
+            }
+          },
+          "temp_change_type": {
+            "name": "氣溫趨勢",
+            "state": {
+              "heat_surge": "氣溫劇升",
+              "warmer": "氣溫回升",
+              "steady": "氣溫平穩",
+              "colder": "氣溫下降",
+              "cold_snap": "氣溫驟降"
+            }
+          },
+          "uv_risk": {
+            "name": "紫外線強度",
+            "state": {
+              "normal": "紫外線強度適中",
+              "high": "紫外線極強"
+            }
+          },
+          "tonight_text": { "name": "今晚天氣狀況" }
         }
       }
     },

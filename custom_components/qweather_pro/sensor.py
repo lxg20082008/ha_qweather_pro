@@ -85,7 +85,8 @@ SENSOR_DESCRIPTIONS: tuple[QWeatherSensorEntityDescription, ...] = (
         key="weather_summary",
         translation_key="weather_summary",
         icon="mdi:weather-partly-cloudy",
-        value_fn=lambda data: data.get("hourly_summary"),
+        value_fn=lambda data: data.get("weather_abstract", {}).get("tonight_text"),
+        attr_fn=lambda data: data.get("weather_abstract", {}),
     ),
 )
 
@@ -97,21 +98,10 @@ async def async_setup_entry(
     """设置平台实体."""
     coordinator = entry.runtime_data
 
-    # 获取当前系统语言
-    ha_lang = hass.config.language
-    # 判断是否为支持生成摘要的语言 (zh 或 en)
-    is_summary_supported = ha_lang.startswith(("zh", "en"))
-
-    # 构建待添加的实体列表
-    entities = []
-    for description in SENSOR_DESCRIPTIONS:
-        # 如果是天气概况实体，且语言不支持，则跳过不生成
-        if description.key == "weather_summary" and not is_summary_supported:
-            continue
-            
-        entities.append(QWeatherSensor(coordinator, entry, description))
-
-    async_add_entities(entities)
+    async_add_entities(
+        QWeatherSensor(coordinator, entry, description)
+        for description in SENSOR_DESCRIPTIONS
+    )
 
 class QWeatherSensor(CoordinatorEntity[QWeatherUpdateCoordinator], SensorEntity):
     """和风天气传感器（官方规范版）."""

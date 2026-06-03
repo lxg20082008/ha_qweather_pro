@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -108,16 +108,14 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         ha_lang = self.hass.config.language # 例如 "zh-Hans" 或 "fr"
         qweather_lang = LANGUAGE_MAP.get(ha_lang, "en") # 匹配不到则默认英文        
         restricted_lang = "zh" if ha_lang.startswith("zh") else "en"
-        is_zh = ha_lang.startswith("zh")
-        is_en = ha_lang.startswith("en")
 
         now_ts = time.time()
+        now_dt = dt_util.now()
         tasks = []
         task_map = []
 
         options = self.entry.options
         use_grid = options.get(CONF_GIRD, False)
-        api_type = "grid-weather" if options.get(CONF_GIRD, False) else "weather"
 
         # 预处理坐标参数
         try:
@@ -230,32 +228,6 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "type_name": a.get("eventType", {}).get("name"),
             })
 
-        # 小时级摘要合成
-        if is_zh:
-            hourly_summary = "近期天气平稳"
-            prefix = "未来6小时："
-            separator = "转"
-        else:
-            # 默认为英文，即使是法语等也会准备英文摘要，但 sensor 层会拦截不显示
-            hourly_summary = "The weather will remain stable"
-            prefix = "Next 6 hours: "
-            separator = " to "
-
-        # ---只有中英文才执行耗时的字符串合成 ---
-        if (is_zh or is_en) and hourly_list:
-            unique_texts = []
-            # 只取未来 6 小时的数据
-            for h in hourly_list[:6]:
-                txt = h.get("text")
-                if txt and txt not in unique_texts:
-                    unique_texts.append(txt)
-            
-            if unique_texts:
-                hourly_summary = f"{prefix}{separator.join(unique_texts)}"
-        elif not (is_zh or is_en):
-            # 非中英语言，不生成摘要
-            hourly_summary = None
-
         # 针对 V1 空气质量的深度解析逻辑
         parsed_air = {}
         if "indexes" in air_raw and air_raw["indexes"]:
@@ -319,8 +291,69 @@ class QWeatherUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "city": self.city_name,
             "minutely_summary": minutely_raw.get("summary", "No precipitation in the next two hours"),
             "minutely_detail": minutely_raw.get("minutely", []),
-            "hourly_summary": hourly_summary,
+            "weather_abstract": self._generate_smart_abstract(c, now_dt),
             "update_time": dt_util.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
+
+    def _generate_smart_abstract(self, c: dict, now_dt: datetime) -> dict[str, Any]:
+        """全天候智能语义引擎"""
+        # 基础数据提取
+        now_raw = c.get("now", {}).get("now", {})
+        daily = c.get("daily", {}).get("daily", [])
+        air_raw = c.get("air", {})
+        # 获取第一个指数对象 (通常是本地标准)
+        air_indexes = air_raw.get("indexes", [])
+        idx = air_indexes[0] if air_indexes else {}
+
+        # 数据不足保护：如果预报还没抓到，返回基础状态
+        if not daily or len(daily) < 2:
+            return {"display_state": now_raw.get("text", "Loading"), "status": "loading"}
+
+        today = daily[0]
+        tomorrow = daily[1]
+        hour = now_dt.hour
+        
+        # ---时段感知 (Time Period) ---
+        if 5 <= hour < 11:
+            period = "morning"
+        elif 11 <= hour < 17:
+            period = "afternoon"
+        elif 17 <= hour < 23:
+            period = "evening"
+        else:
+            period = "night"
+
+        # ---智能显示状态判定 (Display State Logic) ---
+        # 5:00 - 17:00 (白天/下午)：状态显示【今日实况】
+        # 17:00 - 05:00 (傍晚/深夜)：状态显示【明日白天预报】
+        if 5 <= hour < 17:
+            display_state = now_raw.get("text", "Unknown")
+        else:
+            display_state = tomorrow.get("textDay", "Unknown")
+
+        # ---气温趋势监控 (基于今日与明日最高温对比) ---
+        t_max_today = self._to_f(today.get("tempMax"), 0.0)
+        t_max_tomorrow = self._to_f(tomorrow.get("tempMax"), 0.0)
+        diff = t_max_tomorrow - t_max_today
+        
+        if diff >= 5:
+            temp_type = "heat_surge"    # 气温剧升
+        elif diff >= 2:
+            temp_type = "warmer"        # 明显升温
+        elif diff <= -5:
+            temp_type = "cold_snap"     # 断崖式降温
+        elif diff <= -2:
+            temp_type = "colder"        # 明显降温
+        else:
+            temp_type = "steady"        # 气温平稳
+
+        # ---封装语义包 ---
+        return {
+            "period": period,
+            "temp_change_type": temp_type,
+            "aqi_status": idx.get("category"),
+            "uv_risk": "high" if int(today.get("uvIndex", 0)) >= 6 else "normal",
+            "tonight_text": display_state,
         }
 
     # --- 解析辅助方法 (逻辑下沉) ---

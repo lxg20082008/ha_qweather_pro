@@ -35,8 +35,19 @@
       this._detectLang(hass);
     }
 
-    _getIcon(code) {
-      return `/qweather-local/qweather-card/icons/${code || "100"}.svg`;
+    _getIcon(code, datetime = null) {
+      if (!code) return "https://static.qweather.com/img/common/icon/202106d/100.png";
+
+      // 自动判断白天/夜晚
+      let isDay = true;
+
+      if (datetime) {
+        const hour = new Date(datetime).getHours();
+        isDay = hour >= 6 && hour < 18;
+      }
+
+      const suffix = isDay ? "d" : "n";
+      return `https://static.qweather.com/img/common/icon/202106${suffix}/${code}.png`;
     }
 
     _renderAttr(icon, label, value) {

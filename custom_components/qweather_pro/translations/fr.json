@@ -1,35 +1,52 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
-        "title": "Configuration de QWeather Pro",
-        "description": "### ⚙️ Étapes d’ajout \n **Accédez à la [console QWeather](https://console.qweather.com) :** \n 1. Dans les paramètres, copiez **API Host** et renseignez-le ci‑dessous. \n 2. Gestion de projet → Créer un projet, puis ajoutez des identifiants : **JSON Web Token** ou **API KEY**.\n 3. La localisation ne prend en charge que la latitude et la longitude (WGS‑84). Exemple : 116.40,39.90. \n Par défaut, la localisation utilise les coordonnées de HA. \n #### Remarque : L’authentification **API KEY** n’offre pas une sécurité suffisante et est soumise à des limites de requêtes. L’utilisation du **JSON Web Token (JWT)** est recommandée !",
+        "title": "Configurer QWeather Pro",
+        "description": "### ⚙️ Étapes d’ajout\n **Accédez à la [console QWeather](https://console.qweather.com) :**\n 1. Dans les paramètres, copiez **API Host** et renseignez-le ci‑dessous.\n 2. Gestion de projet → Créer un projet, puis ajouter des identifiants : **JSON Web Token** ou **API KEY**.\n 3. La localisation ne prend en charge que les coordonnées (WGS‑84), par ex. : 116.40,39.90.\n La localisation par défaut utilise la latitude/longitude de Home Assistant.\n #### Remarque : L’authentification **API KEY** n’offre pas une sécurité suffisante et est soumise à des limites de requêtes. L’utilisation de **JSON Web Token (JWT)** est fortement recommandée !",
         "data": {
           "host": "Adresse du serveur API (API Host)",
-          "location_id": "Localisation — uniquement latitude/longitude (longitude en premier).",
+          "location_id": "Localisation (coordonnées, longitude en premier)",
           "use_token": "Utiliser l’authentification JWT (recommandé, plus sécurisé)",
-          "api_key": "Clé API standard (laisser vide si JWT est utilisé)"
+          "api_key": "API Key classique (laisser vide si JWT)"
         }
       },
       "jwt_setup": {
-        "title": "Configurer l’authentification sécurisée JWT",
-        "description": "Le système a généré automatiquement une clé publique.\n\n**Étapes :**\n1. Copiez la **clé publique** ci‑dessous.\n2. Accédez à la [console QWeather](https://console.qweather.com), ajoutez des identifiants au projet, choisissez **JSON Web Token**, puis collez la clé publique.\n\n```text\n{public_key}\n```\n\nEnsuite, renseignez **Project ID** et **Key ID** ci‑dessous.",
+        "title": "Configurer l’authentification JWT",
+        "description": "Une clé publique a été générée automatiquement.\n\n**Étapes :**\n1. Copiez la **clé publique** ci‑dessous.\n2. Accédez à la [console QWeather](https://console.qweather.com), ajoutez une nouvelle identité au projet, sélectionnez **JSON Web Token**, puis collez la clé publique.\n\n```text\n{public_key}\n```\n\nEnsuite, renseignez **Project ID** et **Key ID** ci‑dessous.\n### Remarque : L’authentification JWT ne peut être ajoutée qu’une seule fois. Si vous réinstallez l’intégration, l’ancien jeton JWT ne sera plus valide.",
         "data": {
-          "project_id": "ID du projet (Project ID)",
-          "key_id": "ID de l’identifiant (Key ID)"
+          "project_id": "Project ID",
+          "key_id": "Key ID"
         }
+      },
+      "select_location": {
+        "title": "Confirmer la localisation",
+        "description": "Plusieurs régions correspondantes ont été trouvées. Veuillez sélectionner la plus précise :",
+        "data": {
+          "location_index": "Liste des localisations correspondantes"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurer l’authentification",
+        "description": "L’intégration peut avoir cessé de fonctionner en raison d’une authentification invalide. Veuillez mettre à jour votre API Host ou votre clé.",
+        "data": {
+          "host": "API Host",
+          "api_key": "API Key"
+        }
+      },
+      "error": {
+        "cannot_connect": "Échec de connexion réseau, veuillez vérifier l’API Host",
+        "invalid_auth": "Échec d’authentification, vérifiez la clé ou le JWT",
+        "jwt_error": "Échec de génération de la signature JWT",
+        "api_key_missing": "En mode classique, l’API Key est obligatoire",
+        "api_host_deprecated": "Le domaine public n’est plus supporté, utilisez votre API Host personnel",
+        "location_not_found": "Localisation introuvable, essayez d’entrer les coordonnées"
+      },
+      "abort": {
+        "already_configured": "Cette localisation est déjà configurée",
+        "reconfigure_successful": "Configuration mise à jour avec succès !"
       }
-    },
-    "error": {
-      "cannot_connect": "Impossible de se connecter au serveur",
-      "invalid_auth": "Échec de l’authentification",
-      "jwt_error": "Échec de la signature JWT",
-      "api_key_missing": "Le mode standard nécessite une clé API",
-      "location_not_found": "Localisation introuvable",
-      "api_host_deprecated": "L’API publique est obsolète, veuillez utiliser un nouvel API Host"
-    },
-    "abort": {
-      "already_configured": "Cette localisation est déjà configurée"
     }
   },
 
@@ -37,12 +54,12 @@
     "step": {
       "init": {
         "title": "Options de configuration",
-        "description": "### 💡 Instructions d’utilisation\n- La prévision quotidienne peut être définie sur **3d/7d/15d/30d** ; la prévision quotidienne en grille ne prend en charge que **3d/7d**. \n- La prévision horaire peut être définie sur **24h/72h/168h** ; la prévision horaire en grille ne prend en charge que **24h/72h**.\n- **Météo en grille** : après activation de l’API haute précision, certaines données observées (ex. **visibilité**) ne seront plus disponibles et apparaîtront comme `--`.",
+        "description": "### 💡 Guide d’utilisation\n- Les prévisions quotidiennes peuvent être **3j/7j/15j/30j**. Les prévisions maillées ne prennent en charge que **3j/7j**.\n- Les prévisions horaires peuvent être **24h/72h/168h**. Les prévisions maillées ne prennent en charge que **24h/72h**.\n- **Prévisions maillées** : en activant l’API maillée haute précision, certaines données réelles (ex : **visibilité**) peuvent ne pas être disponibles et s’afficheront comme `--`.",
         "data": {
           "update_interval": "Fréquence de mise à jour (minutes)",
-          "dailysteps": "Jours de prévision quotidienne (3‑30)",
-          "hourlysteps": "Heures de prévision horaire (24‑168)",
-          "gird": "Utiliser la météo en grille haute précision (API V7 Grid)",
+          "dailysteps": "Jours de prévision quotidienne (3-30)",
+          "hourlysteps": "Heures de prévision horaire (24-168)",
+          "gird": "Utiliser les prévisions maillées haute précision (V7 Grid API)",
           "custom_ui": "Activer l’interface utilisateur personnalisée"
         }
       }
@@ -72,7 +89,7 @@
           "o3": { "name": "Ozone (O₃)" },
           "co": { "name": "Monoxyde de carbone (CO)" },
           "health_effect": {
-            "name": "Effets sur la santé",
+            "name": "Impact sur la santé",
             "state": {
               "No data available": "Aucune donnée disponible",
               "Please refer to the recommendations of the local meteorological authorities": "Veuillez consulter les recommandations des autorités météorologiques locales"
@@ -80,9 +97,9 @@
           },
           "health_advice": { "name": "Conseils de santé" },
           "stations": {
-            "name": "Informations des stations",
+            "name": "Stations de mesure",
             "state": {
-              "No monitoring station information available": "Aucune information de station disponible"
+              "No monitoring station information available": "Aucune station disponible"
             }
           }
         },
@@ -93,17 +110,17 @@
       },
 
       "warning_info": {
-        "name": "Alerte météorologique",
+        "name": "Alerte météo",
         "state": {
           "Without warning": "Aucune alerte"
         },
         "state_attributes": {
           "id": { "name": "ID de l’alerte" },
           "sender": { "name": "Émetteur" },
-          "issued": { "name": "Heure d’émission" },
+          "issued": { "name": "Date d’émission" },
           "title": { "name": "Titre de l’alerte" },
           "text": { "name": "Contenu de l’alerte" },
-          "instruction": { "name": "Instructions" },
+          "instruction": { "name": "Consignes" },
           "level": {
             "name": "Niveau d’alerte",
             "state": {
@@ -113,7 +130,7 @@
             }
           },
           "color": {
-            "name": "Couleur de l’alerte",
+            "name": "Couleur d’alerte",
             "state": {
               "blue": "Bleu",
               "yellow": "Jaune",
@@ -148,8 +165,35 @@
 
       "weather_summary": {
         "name": "Résumé météo",
-        "state": {
-          "The weather has been stable recently": "Le temps est stable récemment"
+        "state_attributes": {
+          "display_state": { "name": "État d’affichage" },
+          "period": {
+            "name": "Période actuelle",
+            "state": {
+              "morning": "Aujourd’hui dans la matinée",
+              "afternoon": "Aujourd’hui dans l’après‑midi",
+              "evening": "Ce soir",
+              "night": "Demain"
+            }
+          },
+          "temp_change_type": {
+            "name": "Tendance des températures",
+            "state": {
+              "heat_surge": "Hausse brutale",
+              "warmer": "En hausse",
+              "steady": "Stable",
+              "colder": "En baisse",
+              "cold_snap": "Chute brutale"
+            }
+          },
+          "uv_risk": {
+            "name": "Intensité UV",
+            "state": {
+              "normal": "Modérée",
+              "high": "Très forte"
+            }
+          },
+          "tonight_text": { "name": "Météo de ce soir" }
         }
       }
     },
@@ -161,12 +205,12 @@
           "qweather_icon": { "name": "Icône météo" },
           "update_time": { "name": "Heure de mise à jour" },
           "obs_time": { "name": "Heure d’observation" },
-          "condition_cn": { "name": "Conditions météo (chinois)" },
+          "condition_cn": { "name": "Conditions météo (Chinois)" },
           "wind_dir": { "name": "Direction du vent" },
           "cloud": { "name": "Nébulosité" },
           "dew": { "name": "Point de rosée" },
           "precip": { "name": "Précipitations" },
-          "precip_probability": { "name": "Probabilité de précipitations" },
+          "precip_probability": { "name": "Probabilité de précipitation" },
           "feels_like": { "name": "Température ressentie" },
           "wind_scale": { "name": "Force du vent" },
           "sunrise": { "name": "Lever du soleil" },
@@ -175,18 +219,18 @@
           "moonrise": { "name": "Lever de la lune" },
           "moonset": { "name": "Coucher de la lune" },
           "minutely_summary": { "name": "Résumé minute par minute" },
-          "hourly_summary": { "name": "Résumé heure par heure" },
+          "hourly_summary": { "name": "Résumé horaire" },
           "aqi": { "name": "Indice de qualité de l’air" },
           "city": { "name": "Ville" },
           "warning": { "name": "Alerte" },
           "suggestion": { "name": "Conseils de vie" }
         },
         "unit_of_measurement": {
-          "°C": "degrés Celsius",
-          "mmHg": "millimètres de mercure",
-          "km/h": "km/h",
-          "km": "kilomètres",
-          "mm": "millimètres"
+          "°C": "Degrés Celsius",
+          "mmHg": "Millimètres de mercure",
+          "km/h": "Kilomètres/heure",
+          "km": "Kilomètres",
+          "mm": "Millimètres"
         }
       }
     }

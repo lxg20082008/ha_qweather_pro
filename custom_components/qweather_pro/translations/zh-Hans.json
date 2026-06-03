@@ -14,23 +14,39 @@
       },
       "jwt_setup": {
         "title": "配置 JWT 安全认证",
-        "description": "系统已为您自动生成公钥。\n\n**操作步骤：**\n1. 复制下方框中的**公钥**。\n2. 前往[和风天气控制台](https://console.qweather.com),在项目中添加凭据，选择 **JSON Web Token** 并粘贴公钥。\n\n```text\n{public_key}\n```\n\n完成后,填写下方的 **项目ID** 和 **凭据ID**。",
+        "description": "系统已为您自动生成公钥。\n\n**操作步骤：**\n1. 复制下方框中的**公钥**。\n2. 前往[和风天气控制台](https://console.qweather.com),在项目中添加凭据，选择 **JSON Web Token** 并粘贴公钥。\n\n```text\n{public_key}\n```\n\n完成后,填写下方的 **项目ID** 和 **凭据ID**。\n ### 注：JWT方式，只能添加一次，重新添加集成，原有JWT凭据将无法使用。",
         "data": {
           "project_id": "项目 ID (Project ID)",
           "key_id": "凭据 ID (Key ID)"
         }
+      },
+      "select_location": {
+        "title": "确认城市位置",
+        "description": "搜索到以下多个匹配地区，请选择最准确的一个：",
+        "data": {
+          "location_index": "匹配的城市列表"
+        }
+      },
+      "reconfigure": {
+        "title": "重新配置认证信息",
+        "description": "您的集成可能因为认证失效而停止工作，请在此更新您的 API Host 或密钥。",
+        "data": {
+          "host": "API Host",
+          "api_key": "API 密钥"
+        }
+      },  
+      "error": {
+        "cannot_connect": "网络连接失败，请检查 Host 是否正确",
+        "invalid_auth": "身份认证失败，请检查 Key 或 JWT",
+        "jwt_error": "JWT 签名生成失败",
+        "api_key_missing": "普通模式下必须填写 API Key",
+        "api_host_deprecated": "公共域名已失效，请使用个人 API Host",
+        "location_not_found": "未找到该位置，请尝试输入经纬度"
+      },
+      "abort": {
+        "already_configured": "该地理位置已被配置",
+        "reconfigure_successful": "配置已成功更新！"
       }
-    },
-    "error": {
-      "cannot_connect": "无法连接到服务器",
-      "invalid_auth": "身份验证失败",
-      "jwt_error": "JWT 签名失败",
-      "api_key_missing": "标准模式需要 API Key",
-      "location_not_found": "找不到该地理位置",
-      "api_host_deprecated": "公共 API 已废弃，请使用新的 API Host"
-    },
-    "abort": {
-      "already_configured": "该地理位置已被配置"
     }
   },
 
@@ -139,8 +155,35 @@
       },
       "weather_summary": {
         "name": "天气概况",
-        "state":{
-          "The weather has been stable recently": "近期天气平稳"
+        "state_attributes": {
+          "display_state": { "name": "显示状态" },
+          "period": {
+            "name": "当前时段",
+            "state": {
+              "morning": "今天白天",
+              "afternoon": "今天下午",
+              "evening": "今晚",
+              "night": "明天"
+            }
+          },
+          "temp_change_type": {
+            "name": "气温趋势",
+            "state": {
+              "heat_surge": "气温剧升",
+              "warmer": "气温回升",
+              "steady": "气温平稳",
+              "colder": "气温下降",
+              "cold_snap": "气温骤降"
+            }
+          },
+          "uv_risk": {
+            "name": "紫外线强度",
+            "state": {
+              "normal": "紫外线强度适中",
+              "high": "紫外线极强"
+            }
+          },
+          "tonight_text": { "name": "今晚天气状况" }
         }
       }
     },

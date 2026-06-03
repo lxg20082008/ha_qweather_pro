@@ -117,7 +117,7 @@ class QWeatherAPI:
 
     # --- 城市搜索 ---
     async def city_lookup(self, location: str, lang: str):
-        """城市搜索：支持名称、ID 或 坐标."""
+        """城市搜索: 支持名称、ID 或 坐标."""
         return await self.request("v2", "city/lookup", {"location": location, "range": "cn", "lang": lang})
 
     # --- 标准天气 API (基于观测站) ---

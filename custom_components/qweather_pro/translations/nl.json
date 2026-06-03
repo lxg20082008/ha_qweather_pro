@@ -1,48 +1,65 @@
 {
+  "title": "QWeather Pro",
   "config": {
     "step": {
       "user": {
         "title": "QWeather Pro configureren",
-        "description": "### ⚙️ Configuratiestappen \n **Ga naar de [QWeather Console](https://console.qweather.com):** \n 1. Kopieer in de instellingen de **API Host** en vul deze hieronder in. \n 2. Projectbeheer → Maak een project aan en voeg referenties toe: **JSON Web Token** of **API KEY**.\n 3. Locatie ondersteunt alleen breedte‑ en lengtegraad (WGS‑84). Voorbeeld: 116.40,39.90. \n De standaardlocatie gebruikt de HA‑coördinaten. \n #### Opmerking: **API KEY**‑authenticatie biedt onvoldoende beveiliging en is onderhevig aan limieten. Het wordt aanbevolen om **JSON Web Token (JWT)** te gebruiken!",
+        "description": "### ⚙️ Configuratiestappen\n **Ga naar de [QWeather Console](https://console.qweather.com):**\n 1. Kopieer in de instellingen de **API Host** en vul deze hieronder in.\n 2. Projectbeheer → Maak een project aan en voeg referenties toe: kies **JSON Web Token** of **API KEY**.\n 3. Locatie ondersteunt alleen coördinaten (WGS‑84), bijvoorbeeld: 116.40,39.90.\n Standaard wordt de Home Assistant‑locatie gebruikt.\n #### Opmerking: Authenticatie via **API KEY** biedt onvoldoende beveiliging en is beperkt in verzoeken. Het wordt sterk aanbevolen om **JSON Web Token (JWT)** te gebruiken!",
         "data": {
           "host": "API‑serveradres (API Host)",
-          "location_id": "Locatie — alleen breedte-/lengtegraad (lengtegraad eerst).",
+          "location_id": "Locatie (alleen coördinaten, lengtegraad eerst)",
           "use_token": "JWT‑authenticatie gebruiken (aanbevolen, veiliger)",
           "api_key": "Standaard API Key (leeg laten bij gebruik van JWT)"
         }
       },
       "jwt_setup": {
-        "title": "JWT‑beveiligingsauthenticatie instellen",
-        "description": "Het systeem heeft automatisch een openbare sleutel gegenereerd.\n\n**Stappen:**\n1. Kopieer de **openbare sleutel** hieronder.\n2. Ga naar de [QWeather Console](https://console.qweather.com), voeg referenties toe aan het project, kies **JSON Web Token** en plak de sleutel.\n\n```text\n{public_key}\n```\n\nVul vervolgens **Project ID** en **Key ID** hieronder in.",
+        "title": "JWT‑beveiligingsauthenticatie configureren",
+        "description": "Er is automatisch een openbare sleutel gegenereerd.\n\n**Stappen:**\n1. Kopieer de **openbare sleutel** hieronder.\n2. Ga naar de [QWeather Console](https://console.qweather.com), voeg een referentie toe aan het project, kies **JSON Web Token** en plak de sleutel.\n\n```text\n{public_key}\n```\n\nVul daarna **Project ID** en **Key ID** hieronder in.\n### Opmerking: JWT kan slechts één keer worden toegevoegd. Als je de integratie opnieuw toevoegt, wordt de oude JWT ongeldig.",
         "data": {
-          "project_id": "Project‑ID (Project ID)",
-          "key_id": "Sleutel‑ID (Key ID)"
+          "project_id": "Project ID",
+          "key_id": "Key ID"
         }
+      },
+      "select_location": {
+        "title": "Locatie bevestigen",
+        "description": "Er zijn meerdere overeenkomende regio’s gevonden. Kies de meest nauwkeurige:",
+        "data": {
+          "location_index": "Lijst met overeenkomende locaties"
+        }
+      },
+      "reconfigure": {
+        "title": "Authenticatie opnieuw configureren",
+        "description": "De integratie werkt mogelijk niet meer door ongeldige authenticatie. Werk hier je API Host of sleutel bij.",
+        "data": {
+          "host": "API Host",
+          "api_key": "API Key"
+        }
+      },
+      "error": {
+        "cannot_connect": "Netwerkverbinding mislukt, controleer of de Host correct is",
+        "invalid_auth": "Authenticatie mislukt, controleer de Key of JWT",
+        "jwt_error": "JWT‑handtekening genereren mislukt",
+        "api_key_missing": "In standaardmodus is een API Key vereist",
+        "api_host_deprecated": "Publieke domeinen worden niet langer ondersteund, gebruik je persoonlijke API Host",
+        "location_not_found": "Locatie niet gevonden, probeer coördinaten in te voeren"
+      },
+      "abort": {
+        "already_configured": "Deze locatie is al geconfigureerd",
+        "reconfigure_successful": "Configuratie succesvol bijgewerkt!"
       }
-    },
-    "error": {
-      "cannot_connect": "Kan geen verbinding maken met de server",
-      "invalid_auth": "Authenticatie mislukt",
-      "jwt_error": "JWT‑ondertekening mislukt",
-      "api_key_missing": "Standaardmodus vereist een API Key",
-      "location_not_found": "Locatie niet gevonden",
-      "api_host_deprecated": "Publieke API is verouderd, gebruik een nieuwe API Host"
-    },
-    "abort": {
-      "already_configured": "Deze locatie is al geconfigureerd"
     }
   },
 
   "options": {
     "step": {
       "init": {
-        "title": "Configuratie‑opties",
-        "description": "### 💡 Gebruiksinstructies\n- Dagelijkse voorspellingen ondersteunen **3d/7d/15d/30d**, rastervoorspellingen alleen **3d/7d**. \n- Uurlijkse voorspellingen ondersteunen **24h/72h/168h**, rastervoorspellingen alleen **24h/72h**.\n- **Rasterweer**: na het inschakelen van de hoge‑precisie Grid API zijn sommige observatiegegevens (zoals **zichtbaarheid**) niet beschikbaar en worden weergegeven als `--`.",
+        "title": "Opties configureren",
+        "description": "### 💡 Gebruikersgids\n- De dagelijkse voorspelling kan **3/7/15/30 dagen** zijn. Grid‑voorspellingen ondersteunen alleen **3/7 dagen**.\n- Uurlijkse voorspellingen kunnen **24h/72h/168h** zijn. Grid‑uurlijkse voorspellingen ondersteunen alleen **24h/72h**.\n- **Grid‑weer**: bij het inschakelen van de high‑precision Grid API kunnen sommige realtime gegevens (zoals **zichtbaarheid**) ontbreken en worden weergegeven als `--`.",
         "data": {
           "update_interval": "Update-interval (minuten)",
-          "dailysteps": "Aantal dagen voor dagelijkse voorspelling (3‑30)",
-          "hourlysteps": "Aantal uren voor uurlijkse voorspelling (24‑168)",
-          "gird": "Hoge‑precisie rasterweer gebruiken (V7 Grid API)",
+          "dailysteps": "Aantal dagen dagelijkse voorspelling (3–30)",
+          "hourlysteps": "Aantal uren uurlijkse voorspelling (24–168)",
+          "gird": "High‑precision grid‑weer gebruiken (V7 Grid API)",
           "custom_ui": "Aangepaste UI‑ondersteuning inschakelen"
         }
       }
@@ -80,9 +97,9 @@
           },
           "health_advice": { "name": "Gezondheidsadvies" },
           "stations": {
-            "name": "Stationsinformatie",
+            "name": "Meetstationinformatie",
             "state": {
-              "No monitoring station information available": "Geen stationsinformatie beschikbaar"
+              "No monitoring station information available": "Geen meetstationinformatie beschikbaar"
             }
           }
         },
@@ -98,14 +115,14 @@
           "Without warning": "Geen waarschuwing"
         },
         "state_attributes": {
-          "id": { "name": "Alarm‑ID" },
-          "sender": { "name": "Afzender" },
+          "id": { "name": "Waarschuwings‑ID" },
+          "sender": { "name": "Uitgever" },
           "issued": { "name": "Uitgiftetijd" },
-          "title": { "name": "Alarmtitel" },
-          "text": { "name": "Alarmtekst" },
+          "title": { "name": "Titel van waarschuwing" },
+          "text": { "name": "Waarschuwingsinhoud" },
           "instruction": { "name": "Instructies" },
           "level": {
-            "name": "Alarmniveau",
+            "name": "Waarschuwingsniveau",
             "state": {
               "moderate": "Matig",
               "severe": "Ernstig",
@@ -113,7 +130,7 @@
             }
           },
           "color": {
-            "name": "Alarmkleur",
+            "name": "Waarschuwingskleur",
             "state": {
               "blue": "Blauw",
               "yellow": "Geel",
@@ -126,7 +143,7 @@
       },
 
       "today_temp_range": {
-        "name": "Temperatuurbereik van vandaag",
+        "name": "Temperatuurbereik vandaag",
         "state": {
           "Unknown": "Onbekend"
         },
@@ -148,8 +165,35 @@
 
       "weather_summary": {
         "name": "Weeroverzicht",
-        "state": {
-          "The weather has been stable recently": "Het weer is de laatste tijd stabiel"
+        "state_attributes": {
+          "display_state": { "name": "Weergavestatus" },
+          "period": {
+            "name": "Huidige periode",
+            "state": {
+              "morning": "Vandaag overdag",
+              "afternoon": "Vandaag in de middag",
+              "evening": "Vanavond",
+              "night": "Morgen"
+            }
+          },
+          "temp_change_type": {
+            "name": "Temperatuurtrend",
+            "state": {
+              "heat_surge": "Sterke stijging",
+              "warmer": "Stijgend",
+              "steady": "Stabiel",
+              "colder": "Dalend",
+              "cold_snap": "Sterke daling"
+            }
+          },
+          "uv_risk": {
+            "name": "UV‑intensiteit",
+            "state": {
+              "normal": "Gemiddeld",
+              "high": "Zeer hoog"
+            }
+          },
+          "tonight_text": { "name": "Weer van vanavond" }
         }
       }
     },
@@ -174,7 +218,7 @@
           "moon_phase": { "name": "Maanfase" },
           "moonrise": { "name": "Maanopkomst" },
           "moonset": { "name": "Maanondergang" },
-          "minutely_summary": { "name": "Per‑minuut overzicht" },
+          "minutely_summary": { "name": "Per‑minuut samenvatting" },
           "hourly_summary": { "name": "Uurlijkse samenvatting" },
           "aqi": { "name": "Luchtkwaliteitsindex" },
           "city": { "name": "Stad" },
@@ -182,11 +226,11 @@
           "suggestion": { "name": "Leefstijladvies" }
         },
         "unit_of_measurement": {
-          "°C": "graden Celsius",
-          "mmHg": "millimeter kwik",
-          "km/h": "km/u",
-          "km": "kilometer",
-          "mm": "millimeter"
+          "°C": "Graden Celsius",
+          "mmHg": "Millimeter kwik",
+          "km/h": "Kilometer per uur",
+          "km": "Kilometer",
+          "mm": "Millimeter"
         }
       }
     }

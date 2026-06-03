@@ -12,25 +12,41 @@
         }
       },
       "jwt_setup": {
-        "title": "JWT Security Configuration",
-        "description": "The system has generated a public key for you.\n\n1. Copy the **Public Key** below.\n2. Add it to [QWeather Console](https://console.qweather.com) as a **JSON Web Token** credential.\n\n```text\n{public_key}\n```\n\nThen enter the IDs below.",
+        "title": "Configure JWT Security Authentication",
+        "description": "A public key has been automatically generated for you.\n\n**Steps:**\n1. Copy the **public key** in the box below.\n2. Go to the [QWeather Console](https://console.qweather.com), add a credential to your project, select **JSON Web Token**, and paste the public key.\n\n```text\n{public_key}\n```\n\nAfter completing this, fill in the **Project ID** and **Key ID** below.\n### Note: JWT authentication can only be added once. If you re-add the integration, the original JWT credential will no longer be valid.",
         "data": {
           "project_id": "Project ID",
           "key_id": "Key ID"
         }
+      },
+      "select_location": {
+        "title": "Confirm Location",
+        "description": "Multiple matching regions were found. Please select the most accurate one:",
+        "data": {
+          "location_index": "Matched Location List"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Authentication",
+        "description": "Your integration may have stopped working due to invalid authentication. Please update your API Host or key here.",
+        "data": {
+          "host": "API Host",
+          "api_key": "API Key"
+        }
+      },
+      "error": {
+        "cannot_connect": "Network connection failed, please check whether the Host is correct",
+        "invalid_auth": "Authentication failed, please check your Key or JWT",
+        "jwt_error": "Failed to generate JWT signature",
+        "api_key_missing": "API Key is required in standard mode",
+        "api_host_deprecated": "Public API domains are no longer supported, please use your personal API Host",
+        "location_not_found": "Location not found, please try entering latitude and longitude"
+      },
+      "abort": {
+        "already_configured": "This location has already been configured",
+        "reconfigure_successful": "Configuration updated successfully!"
       }
-    },
-    "error": {
-      "cannot_connect": "Failed to connect to QWeather server.",
-      "invalid_auth": "Authentication failed. Check your Key or JWT credentials.",
-      "jwt_error": "JWT signature failed. Please check the generated keys.",
-      "api_key_missing": "API Key is required for Standard Mode.",
-      "location_not_found": "Location not found.",
-      "api_host_deprecated": "Public API has been deprecated. Please use the new API Host."
-    },
-    "abort": {
-      "already_configured": "This location is already configured."
-    }
+    } 
   },
 
   "options": {

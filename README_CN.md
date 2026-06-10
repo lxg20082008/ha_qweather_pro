@@ -7,6 +7,7 @@
 [![Release](https://img.shields.io/github/v/release/hzonz/ha_qweather_pro)](https://github.com/hzonz/ha_qweather_pro/releases)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/hzonz/ha_qweather_pro/blob/main/LICENSE)
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+![](https://komarev.com/ghpvc/?username=hzonz&color=ff69b4)
 
 ## 一款为 Home Assistant 深度定制的 和风天气 (QWeather) 高级集成。采用 2026 年最新开发标准重构，不仅提供精准的气象数据，还包含极速渲染的 原生 SVG 天气卡片 与 专业级详情弹窗。
 
